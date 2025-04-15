@@ -28,7 +28,7 @@ const YourNameComponent = ({ data, style }: YourNameComponentProps) => {
       style={newStyle}
       className="text-[#858585]"
     >
-      {title}
+      {title} BahuBali
     </div>
   );
 };
