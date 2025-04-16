@@ -19,4 +19,5 @@ export const components = {
   dropdown: dynamic(() => import('./dropdown')),
   collapse: dynamic(() => import('./collapse')),
   bahu_bali: dynamic(() => import("./BahuBali")),
+  dap_mo_cuoc_tinh: dynamic(() => import("./DapMoCuocTinh")),
 };
