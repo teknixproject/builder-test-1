@@ -20,4 +20,5 @@ export const components = {
   collapse: dynamic(() => import('./collapse')),
   bahu_bali: dynamic(() => import("./BahuBali")),
   dap_mo_cuoc_tinh: dynamic(() => import("./DapMoCuocTinh")),
+  pac: dynamic(() => import("./Pac")),
 };
