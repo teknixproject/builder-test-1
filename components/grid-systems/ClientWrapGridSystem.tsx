@@ -45,7 +45,7 @@ const RenderUIClient = (props: any) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { addAndUpdateApiResource, apiResources } = apiResourceStore();
   const { setDataTypeDocumentVariable } = stateManagementStore();
-  const { setActions } = actionsStore();
+  // const { setActions } = actionsStore();
 
   const { bodyLayout, footerLayout, headerLayout, isLoading } = useConstructorDataAPI(
     props?.documentId,
@@ -112,33 +112,33 @@ const RenderUIClient = (props: any) => {
     }
   };
 
-  const getActions = async () => {
-    try {
-      const result = await actionService.getData({
-        projectId: projectId ?? '',
-        uid: uid ?? '',
-      });
-      if (_.isEmpty(result?.data?.data)) return;
-      setActions(result.data.data);
-    } catch (error) {
-      console.log('🚀 ~ getStates ~ error:', error);
-    }
-  };
-  const getApiCall = async () => {
-    try {
-      const result = await apiCallService.get({ uid: uid ?? '', projectId: projectId ?? '' });
-      addAndUpdateApiResource({ uid: uid ?? '', apis: result?.data?.apis });
-    } catch (error) {
-      console.log('🚀 ~ getApiCall ~ error:', error);
-    }
-  };
+  // const getActions = async () => {
+  //   try {
+  //     const result = await actionService.getData({
+  //       projectId: projectId ?? '',
+  //       uid: uid ?? '',
+  //     });
+  //     if (_.isEmpty(result?.data?.data)) return;
+  //     setActions(result.data.data);
+  //   } catch (error) {
+  //     console.log('🚀 ~ getStates ~ error:', error);
+  //   }
+  // };
+  // const getApiCall = async () => {
+  //   try {
+  //     const result = await apiCallService.get({ uid: uid ?? '', projectId: projectId ?? '' });
+  //     addAndUpdateApiResource({ uid: uid ?? '', apis: result?.data?.apis });
+  //   } catch (error) {
+  //     console.log('🚀 ~ getApiCall ~ error:', error);
+  //   }
+  // };
 
   useEffect(() => {
     if (!projectId) return;
 
     getStates();
-    getApiCall();
-    getActions();
+    // getApiCall();
+    // getActions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uid, projectId]);
 
@@ -196,6 +196,7 @@ const PreviewUI = (props: any) => {
   // #region hooks
   const [deviceType, setDeviceType] = useState(getDeviceType());
   const { dataPreviewUI, isLoading } = usePreviewUI(projectId ?? '', uid);
+  console.log('dataPreviewUI', dataPreviewUI);
 
   // #region state
 
@@ -284,6 +285,7 @@ const PreviewUI = (props: any) => {
   if (isLoading) {
     return <LoadingPage />;
   }
+
 
   return (
     <div className="component-preview-container">
