@@ -5,21 +5,22 @@ import _ from 'lodash';
 import queryString from 'query-string';
 import React, { useEffect, useState } from 'react';
 import { CSSProperties } from 'styled-components';
+  console.log();
 
 import { usePagination } from '@/hooks/usePagination';
 import { useApiCallStore } from '@/providers';
 import { GridItem } from '@/types/gridItem';
 import { Icon } from '@iconify/react'; // Import Iconify for better icons
 
-import Loading from './loading';
+import Loading from './Loading';
 
 type TProps = {
   data?: GridItem;
   style?: CSSProperties;
 };
+console.log();
 
 const Pagination: React.FC<TProps> = ({ style, data }) => {
-  console.log('🚀 Pagination~ data:', data);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1000);
   const { apiData, findApiData } = useApiCallStore((state) => state);

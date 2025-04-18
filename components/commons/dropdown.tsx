@@ -26,10 +26,10 @@ const Dropdown: React.FC<DropdownProps> = ({
   menuClassDropdow,
   ...props
 }) => {
-  console.log('🚀Dropdown ~ data:', data);
   const pathname = usePathname();
   const cleanedPath = pathname.startsWith('/') ? pathname.slice(1) : pathname;
   const [isOpen, setIsOpen] = useState(false);
+  console.log('🚀 ~ isOpen:', isOpen);
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
   const { title } = useData({ layoutData: data, defaultTitle: 'Dropdown' });
   const router = useRouter();
@@ -69,9 +69,11 @@ const Dropdown: React.FC<DropdownProps> = ({
     if (!pathname) return;
     const label = dropdownItems?.find((item) => pathname.includes(item.value))?.label || title;
     setSelectedItem(label);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
   const handleToggle = () => {
+    console.log('🚀 ~ handleToggle ~ isOpen:', isOpen);
     setIsOpen((prev) => !prev);
   };
 

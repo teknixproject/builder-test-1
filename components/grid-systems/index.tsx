@@ -39,9 +39,7 @@ export const RenderSlice: React.FC<TRenderSlice> = ({ slice, isMenu }) => {
     ) {
       const { apiCall } = sliceRef.dynamicGenerate || {};
       const valueJson = apiData.find((item) => item.id === apiCall?.id);
-      // Cập nhật tiêu đề cho content
       const title = updateTitleInText(sliceRef, valueJson?.data);
-      // Cập nhật sliceRef với các card mới
       if (title !== sliceRef?.dataSlice?.title) {
         setSliceRef((prev) => ({
           ...prev,
@@ -56,18 +54,15 @@ export const RenderSlice: React.FC<TRenderSlice> = ({ slice, isMenu }) => {
   const key = sliceRef?.id?.split('$')[0];
   const data = useMemo(() => {
     return componentHasAction.includes(key!) ? sliceRef : _.get(sliceRef, 'dataSlice');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sliceRef]);
 
   const styleDevice: string = getDeviceSize() as string;
-
-  // const key = sliceRef?.id?.split('$')[0];
 
   const SliceComponent = useMemo(() => {
     const key = sliceRef?.id?.split('$')[0];
     return componentRegistry[key as keyof typeof componentRegistry];
   }, [sliceRef?.id]);
-
-  // const isButton = key === 'button';
 
   const styleSlice = (_.get(sliceRef, [styleDevice]) as React.CSSProperties) || sliceRef?.style;
 
@@ -108,8 +103,10 @@ export const RenderSlice: React.FC<TRenderSlice> = ({ slice, isMenu }) => {
       <RenderGrid items={sliceRef.childs} idParent={sliceRef.id!} slice={sliceRef} />
     )
   );
+
   const isMemuConvert = isMenu || componentHasMenu.includes(key || '');
   const isActive = setActive({ isMenu: isMemuConvert, data, cleanedPath: pathname });
+
   return sliceClasses || Object.keys(inlineStyles).length ? (
     <CsContainerRenderSlice
       className={`${sliceClasses} ${_.get(styleSlice, 'className', '')} `}
@@ -185,6 +182,8 @@ export const RenderGrid: React.FC<RenderGripProps> = ({ idParent, slice }) => {
 const GridSystemContainer = ({ page, deviceType, isBody, isHeader, isFooter }: GridSystemProps) => {
   const [layout, setLayout] = useState<GridItem | null>(null);
 
+  const styleDevice: string = getDeviceSize() as string;
+
   const config = layout || page;
   const [refreshKey, setRefreshKey] = useState(0);
   const previousComponentRef = useRef(null);
@@ -198,9 +197,13 @@ const GridSystemContainer = ({ page, deviceType, isBody, isHeader, isFooter }: G
   }, [refreshKey]); // ✅
 
   const content = (
-    <div className="mx-auto flex justify-center">
+    <div className="mx-auto flex justify-center h-full w-full">
       {config?.childs ? (
-        <div className="w-full flex flex-col justify-center flex-wrap" id={config.id}>
+        <div
+          className="w-full flex flex-col justify-center flex-wrap"
+          id={config.id}
+          style={_.get(config, [styleDevice]) as React.CSSProperties}
+        >
           <RenderGrid items={config.childs} idParent={config.id!} slice={config} />
         </div>
       ) : (

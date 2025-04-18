@@ -1,12 +1,12 @@
 import _ from 'lodash';
 import { CSSProperties, useMemo } from 'react';
+import styled, { css } from 'styled-components';
 
 import { useData } from '@/hooks';
 import { GridItem } from '@/types/gridItem';
 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { convertStyle } from '@/lib/utils';
-import styled from 'styled-components';
 
 interface TextProps {
   data: GridItem;
@@ -28,9 +28,12 @@ const Text = ({ data, style }: TextProps) => {
   const content = !_.isEmpty(titles) ? (
     <TextComplex data={titles} style={style} />
   ) : (
-    <div style={convertStyle(newStyle)} className="text-[#858585]">
+    <CsText
+      style={convertStyle(newStyle)}
+      styledComponentCss={data?.styledComponentCss}
+    >
       {_.isObject(title) ? JSON.stringify(title) : title}
-    </div>
+    </CsText>
   );
 
   if (_.isEmpty(tooltip?.title)) return content;
@@ -49,11 +52,12 @@ const Text = ({ data, style }: TextProps) => {
 
 const TextComplex = ({ data, style }: { data: any; style: any }) => {
   return (
-    <div
+    <Container
       style={{
         display: 'inline',
         ...style,
       }}
+      styledComponentCss={data?.styledComponentCss}
     >
       {Object.keys(data).map((key) => {
         const isSpecial = data[key]?.isSpecial;
@@ -75,7 +79,7 @@ const TextComplex = ({ data, style }: { data: any; style: any }) => {
           data[key]?.text
         );
       })}
-    </div>
+    </Container>
   );
 };
 
@@ -88,6 +92,32 @@ const CsStrong = styled.strong<{ gradient?: string }>`
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     `
+      : ''}
+`;
+
+interface StylesProps {
+  style?: {
+    hover?: CSSProperties;
+    [key: string]: any;
+  };
+  styledComponentCss?: string;
+}
+
+const Container = styled.div<StylesProps>`
+  ${(props) =>
+    props.styledComponentCss
+      ? css`
+          ${props.styledComponentCss}
+        `
+      : ''}
+`;
+
+const CsText = styled.div<StylesProps>`
+  ${(props) =>
+    props.styledComponentCss
+      ? css`
+          ${props.styledComponentCss}
+        `
       : ''}
 `;
 

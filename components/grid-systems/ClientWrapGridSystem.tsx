@@ -1,6 +1,7 @@
 'use client';
 
 import _ from 'lodash';
+import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -12,9 +13,7 @@ import { stateManagerService } from '@/services/stateManagement';
 import { apiResourceStore, layoutStore } from '@/stores';
 import { actionsStore } from '@/stores/actions';
 import { stateManagementStore } from '@/stores/stateManagement';
-import { TTypeSelectState } from '@/types';
-
-import dynamic from 'next/dynamic';
+import { TTypeSelect, TTypeSelectState } from '@/types';
 
 type DeviceType = 'mobile' | 'desktop';
 
@@ -45,7 +44,7 @@ const RenderUIClient = (props: any) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { addAndUpdateApiResource, apiResources } = apiResourceStore();
   const { setDataTypeDocumentVariable } = stateManagementStore();
-  // const { setActions } = actionsStore();
+  const { setActions } = actionsStore();
 
   const { bodyLayout, footerLayout, headerLayout, isLoading } = useConstructorDataAPI(
     props?.documentId,
@@ -112,33 +111,33 @@ const RenderUIClient = (props: any) => {
     }
   };
 
-  // const getActions = async () => {
-  //   try {
-  //     const result = await actionService.getData({
-  //       projectId: projectId ?? '',
-  //       uid: uid ?? '',
-  //     });
-  //     if (_.isEmpty(result?.data?.data)) return;
-  //     setActions(result.data.data);
-  //   } catch (error) {
-  //     console.log('🚀 ~ getStates ~ error:', error);
-  //   }
-  // };
-  // const getApiCall = async () => {
-  //   try {
-  //     const result = await apiCallService.get({ uid: uid ?? '', projectId: projectId ?? '' });
-  //     addAndUpdateApiResource({ uid: uid ?? '', apis: result?.data?.apis });
-  //   } catch (error) {
-  //     console.log('🚀 ~ getApiCall ~ error:', error);
-  //   }
-  // };
+  const getActions = async () => {
+    try {
+      const result = await actionService.getData({
+        projectId: projectId ?? '',
+        uid: uid ?? '',
+      });
+      if (_.isEmpty(result?.data?.data)) return;
+      setActions(result.data.data);
+    } catch (error) {
+      console.log('🚀 ~ getStates ~ error:', error);
+    }
+  };
+  const getApiCall = async () => {
+    try {
+      const result = await apiCallService.get({ uid: uid ?? '', projectId: projectId ?? '' });
+      addAndUpdateApiResource({ uid: uid ?? '', apis: result?.data?.apis });
+    } catch (error) {
+      console.log('🚀 ~ getApiCall ~ error:', error);
+    }
+  };
 
   useEffect(() => {
     if (!projectId) return;
 
     getStates();
-    // getApiCall();
-    // getActions();
+    getApiCall();
+    getActions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uid, projectId]);
 
@@ -185,6 +184,7 @@ const PreviewUI = (props: any) => {
   const searchParams = useSearchParams();
   const uid = searchParams.get('uid');
   const projectId = searchParams.get('projectId');
+  const sectionName = searchParams.get('sectionName');
 
   //#region store
   const { setData } = layoutStore();
@@ -195,11 +195,10 @@ const PreviewUI = (props: any) => {
 
   // #region hooks
   const [deviceType, setDeviceType] = useState(getDeviceType());
-  const { dataPreviewUI, isLoading } = usePreviewUI(projectId ?? '', uid);
-  console.log('dataPreviewUI', dataPreviewUI);
+  const { dataPreviewUI, isLoading } = usePreviewUI(projectId ?? '', uid, sectionName);
 
   // #region state
-
+  const state = _.get(dataPreviewUI, 'state');
   const isPage = _.get(dataPreviewUI, 'typePreview') === 'page';
 
   const headerLayout = _.get(dataPreviewUI, 'headerLayout');
@@ -217,39 +216,39 @@ const PreviewUI = (props: any) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const getStates = async () => {
-    const list: TTypeSelectState[] = ['appState', 'componentState', 'globalState'];
-    try {
-      await Promise.all(
-        list.map(async (type: TTypeSelectState) => {
-          const result = await stateManagerService.getData(
-            type === 'globalState'
-              ? {
-                  projectId: projectId ?? '',
-                  type,
-                }
-              : {
-                  uid: uid ?? '',
-                  projectId: projectId ?? '',
-                  type,
-                }
-          );
-          if (_.isEmpty(result?.data)) return;
-          const { state } = result?.data;
-          if (_.isEmpty(state)) return;
+  // const getStates = async () => {
+  //   const list: TTypeSelectState[] = ['appState', 'componentState', 'globalState'];
+  //   try {
+  //     await Promise.all(
+  //       list.map(async (type: TTypeSelectState) => {
+  //         const result = await stateManagerService.getData(
+  //           type === 'globalState'
+  //             ? {
+  //                 projectId: projectId ?? '',
+  //                 type,
+  //               }
+  //             : {
+  //                 uid: uid ?? '',
+  //                 projectId: projectId ?? '',
+  //                 type,
+  //               }
+  //         );
+  //         if (_.isEmpty(result?.data)) return;
+  //         const { state } = result?.data;
+  //         if (_.isEmpty(state)) return;
 
-          if (state) {
-            setDataTypeDocumentVariable({
-              type,
-              dataUpdate: state,
-            });
-          }
-        })
-      );
-    } catch (error) {
-      console.log('🚀 ~ getStates ~ error:', error);
-    }
-  };
+  //         if (state) {
+  //           setDataTypeDocumentVariable({
+  //             type,
+  //             dataUpdate: state,
+  //           });
+  //         }
+  //       })
+  //     );
+  //   } catch (error) {
+  //     console.log('🚀 ~ getStates ~ error:', error);
+  //   }
+  // };
 
   const getActions = async () => {
     try {
@@ -272,10 +271,22 @@ const PreviewUI = (props: any) => {
     }
   };
 
+  const setStateFormDataPreview = () => {
+    if (state) {
+      ['appState', 'globalState', 'componentState'].forEach((type) => {
+        setDataTypeDocumentVariable({
+          type: type as TTypeSelect,
+          dataUpdate: state[type],
+        });
+      });
+    }
+  };
+
   useEffect(() => {
     if (bodyLayout) setData(bodyLayout);
 
-    getStates();
+    // getStates();
+    setStateFormDataPreview();
     getApiCall();
     getActions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -285,7 +296,6 @@ const PreviewUI = (props: any) => {
   if (isLoading) {
     return <LoadingPage />;
   }
-
 
   return (
     <div className="component-preview-container">
