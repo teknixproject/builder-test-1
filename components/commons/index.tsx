@@ -21,4 +21,5 @@ export const components = {
   bahu_bali: dynamic(() => import('./BahuBali')),  text_gradient_home2: dynamic(() => import("./TextGradientHome2")),
   text_gradient_support2: dynamic(() => import("./TextGradientSupport2")),
   text_gradienthihi2: dynamic(() => import("./TextGradienthihi2")),
+  text_gradient_ini: dynamic(() => import("./TextGradientIni")),
 };
