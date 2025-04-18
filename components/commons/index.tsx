@@ -18,4 +18,5 @@ export const components = {
   navigation: dynamic(() => import('./navigation')),
   dropdown: dynamic(() => import('./dropdown')),
   collapse: dynamic(() => import('./collapse')),
-  bahu_bali: dynamic(() => import('./BahuBali')),};
+  bahu_bali: dynamic(() => import('./BahuBali')),  text_gradient_home2: dynamic(() => import("./TextGradientHome2")),
+};
